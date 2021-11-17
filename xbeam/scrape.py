@@ -7,20 +7,15 @@ import requests
 
 
 def getpuz(date: datetime):
-    url = "https://www.xwordinfo.com/Crossword?date={month}/{day}/{year}"
-    try:
-        result = requests.get(
-            "https://www.xwordinfo.com/JSON/Data.aspx",
-            params={
-                "date": f"{date.month}/{date.day}/{date.year}",
-                "format": "text",
-            },
-            headers={"Referer": "https://www.xwordinfo.com/JSON/"},
-        )
-        return result.json()
-    except Exception:
-        print()
-        raise
+    result = requests.get(
+        "https://www.xwordinfo.com/JSON/Data.aspx",
+        params={
+            "date": f"{date.month}/{date.day}/{date.year}",
+            "format": "text",
+        },
+        headers={"Referer": "https://www.xwordinfo.com/JSON/"},
+    )
+    return result.json()
 
 
 def scrape(
@@ -41,7 +36,7 @@ def scrape(
             "\r|"
             + "-" * progress
             + " " * (50 - progress)
-            + f"| {delta/n:.1%}",
+            + f"| {delta/n:.2%}",
             end="",
         )
     print()
@@ -50,4 +45,4 @@ def scrape(
 if __name__ == "__main__":
     dest = Path(__file__).parents[1] / "data"
     dest.mkdir(exist_ok=True)
-    scrape(datetime(2010, 1, 1), datetime(2021, 11, 14), dest)
+    scrape(datetime(1995, 1, 1), datetime(2021, 11, 14), dest)

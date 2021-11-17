@@ -1,5 +1,9 @@
-target
-data/
 .DS_Store
+.ipynb_checkpoints
+.mypy_cache
 .vscode/
+data/
 examples/
+old-html-data/
+target
+*.ipynb
