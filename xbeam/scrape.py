@@ -30,7 +30,7 @@ def scrape(
             puz = getpuz(date)
             with open(dest, "w") as f:
                 json.dump(puz, f)
-            time.sleep(0.1)
+            time.sleep(0.5)
         progress = int(50 * delta / n)
         print(
             "\r|"
