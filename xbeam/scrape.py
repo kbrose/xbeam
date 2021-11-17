@@ -22,7 +22,8 @@ def scrape(
     earliest: datetime, latest: datetime, folder: Path, overwrite=False
 ):
     n = (latest - earliest).days
-    print("|" + " " * 50 + "|\r", end="")
+    progbar_size = 60
+    print("|" + " " * progbar_size + "|\r", end="")
     for delta in range(n):
         date = latest - timedelta(days=delta)
         dest = folder / (date.isoformat()[:10] + ".json")
@@ -31,11 +32,11 @@ def scrape(
             with open(dest, "w") as f:
                 json.dump(puz, f)
             time.sleep(0.5)
-        progress = int(50 * delta / n)
+        progress = int(progbar_size * delta / n)
         print(
             "\r|"
             + "-" * progress
-            + " " * (50 - progress)
+            + " " * (progbar_size - progress)
             + f"| {delta/n:.2%}",
             end="",
         )
