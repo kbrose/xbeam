@@ -1,29 +1,23 @@
 from pathlib import Path
-from typing import NamedTuple
-import time
 import html
 import json
+import time
 
 import numpy as np
 
-
-class Puzzle(NamedTuple):
-    boxes: np.ndarray
-    # numbers: np.ndarray
-    circles: np.ndarray | None
-    shades: np.ndarray | None
-    title: str | None
-    across: dict[int, str]
-    down: dict[int, str] | None
+from puzzle import Puzzle
 
 
 def parse(data: dict) -> Puzzle:
     num_rows, num_cols = data["size"]["rows"], data["size"]["cols"]
 
     boxes = np.zeros((num_rows, num_cols), dtype="uint8")
-
     for i, entry in enumerate(data["grid"]):
         boxes[i // num_cols, i % num_cols] = entry != "."
+
+    numbers = np.zeros((num_rows, num_cols), dtype="uint8")
+    for i, entry in enumerate(data["gridnums"]):
+        numbers[i // num_cols, i % num_cols] = entry
 
     circles = None
     if data["circles"]:
@@ -51,6 +45,7 @@ def parse(data: dict) -> Puzzle:
 
     return Puzzle(
         boxes=boxes,
+        numbers=numbers,
         circles=circles,
         shades=shades,
         title=title,
@@ -67,12 +62,13 @@ def monitor_parse_success():
     while True:
         total = 0
         errors = 0
-        for f in (Path(__file__).parents[1] / "data").glob("*.json"):
+        files = list((Path(__file__).parents[1] / "data").glob("*.json"))
+        for f in files:
             total += 1
             if has_succeeded.get(f):
                 continue
             try:
-                parse(json.loads(f.read_text()))
+                puz = parse(json.loads(f.read_text()))
             except Exception:
                 errors += 1
             else:
