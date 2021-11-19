@@ -68,7 +68,7 @@ def monitor_parse_success():
             if has_succeeded.get(f):
                 continue
             try:
-                puz = parse(json.loads(f.read_text()))
+                parse(json.loads(f.read_text()))
             except Exception:
                 errors += 1
             else:

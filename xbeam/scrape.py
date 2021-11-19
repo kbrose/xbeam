@@ -46,4 +46,4 @@ def scrape(
 if __name__ == "__main__":
     dest = Path(__file__).parents[1] / "data"
     dest.mkdir(exist_ok=True)
-    scrape(datetime(1980, 1, 1), datetime(2021, 11, 17), dest)
+    scrape(datetime(1979, 1, 1), datetime(2021, 11, 18), dest)
