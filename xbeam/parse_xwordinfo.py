@@ -4,7 +4,8 @@ import time
 from pathlib import Path
 
 import numpy as np
-from puzzle import Puzzle
+
+from .puzzle import Puzzle
 
 
 def parse(data: dict) -> Puzzle:

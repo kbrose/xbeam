@@ -1,10 +1,12 @@
 from io import BytesIO
 
 import matplotlib.pyplot as plt
+import numpy as np
 from matplotlib import patches
 from matplotlib.axes import Axes
-from PIL import Image
-from puzzle import Puzzle
+from PIL import Image, ImageFilter
+
+from .puzzle import Puzzle
 
 
 def _draw_square(ax: Axes, i: int, j: int, color=tuple):
@@ -68,6 +70,7 @@ def plot_grid(puz: Puzzle, ax: Axes = None) -> Axes:
 
 def puz2img(puz: Puzzle) -> Image:
     f, ax = plt.subplots(1)
+    f.set_size_inches(8.5, 11)
     plot_grid(puz, ax)
     b = BytesIO()
     plt.savefig(
@@ -75,37 +78,38 @@ def puz2img(puz: Puzzle) -> Image:
         format="png",
         transparent=True,
         dpi=300,
-        bbox_inches="tight",
-        pad_inches=0.01,
+        # bbox_inches="tight",
+        # pad_inches=2,
     )
     plt.close(f)
     b.seek(0)
-    with Image.open(b) as img:
-        return img
+    img = Image.open(b)
+    img.thumbnail((1500, 1500))
+    return img
+
+
+def paperize(img: Image) -> Image:
+    paper = np.clip(np.random.normal(0.9, 0.05, img.size[::-1]), 0, 1)
+    base = (
+        Image.fromarray((paper * 255).astype("uint8"))
+        .filter(ImageFilter.GaussianBlur(radius=1))
+        .convert("RGBA")
+    )
+    return Image.alpha_composite(base, img)
 
 
 if __name__ == "__main__":
     import json
     from pathlib import Path
 
-    from parse_xwordinfo import parse
+    from .parse_xwordinfo import parse
 
     with open(Path(__file__).parents[1] / "data/2021-09-12.json") as f:
-        plot_grid(parse(json.load(f)))
-        plt.savefig(
-            "/Users/kevin/Desktop/Figure_1.png",
-            transparent=True,
-            dpi=200,
-            bbox_inches="tight",
-            pad_inches=0.01,
+        paperize(puz2img(parse(json.load(f)))).save(
+            "/Users/kevin/Desktop/fig1.png"
         )
 
     with open(Path(__file__).parents[1] / "data/2021-09-14.json") as f:
-        plot_grid(parse(json.load(f)))
-        plt.savefig(
-            "/Users/kevin/Desktop/Figure_2.png",
-            transparent=True,
-            dpi=200,
-            bbox_inches="tight",
-            pad_inches=0.01,
+        paperize(puz2img(parse(json.load(f)))).save(
+            "/Users/kevin/Desktop/fig2.png"
         )
