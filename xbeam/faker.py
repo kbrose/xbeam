@@ -1,11 +1,9 @@
 from io import BytesIO
 
 import matplotlib.pyplot as plt
-from matplotlib.axes import Axes
 from matplotlib import patches
+from matplotlib.axes import Axes
 from PIL import Image
-import numpy as np
-
 from puzzle import Puzzle
 
 
@@ -68,7 +66,7 @@ def plot_grid(puz: Puzzle, ax: Axes = None) -> Axes:
     return ax
 
 
-def grid2pixels(puz: Puzzle) -> np.ndarray:
+def puz2img(puz: Puzzle) -> Image:
     f, ax = plt.subplots(1)
     plot_grid(puz, ax)
     b = BytesIO()
@@ -82,13 +80,15 @@ def grid2pixels(puz: Puzzle) -> np.ndarray:
     )
     plt.close(f)
     b.seek(0)
-    return np.array(Image.open(b))
+    with Image.open(b) as img:
+        return img
 
 
 if __name__ == "__main__":
-    from parse_xwordinfo import parse
     import json
     from pathlib import Path
+
+    from parse_xwordinfo import parse
 
     with open(Path(__file__).parents[1] / "data/2021-09-12.json") as f:
         plot_grid(parse(json.load(f)))
